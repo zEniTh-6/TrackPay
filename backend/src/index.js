@@ -7,6 +7,7 @@ const connectDB = require('./config/db');
 // Import routes
 const paymentRoutes = require('./routes/payment');
 const webhookRoutes = require('./routes/webhook');
+const transactionRoutes = require('./routes/transactions');
 
 // Connect to database
 connectDB();
@@ -24,6 +25,7 @@ app.use(express.json());
 // Routes
 app.use('/api', paymentRoutes);
 app.use('/api', webhookRoutes);
+app.use('/api', transactionRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
