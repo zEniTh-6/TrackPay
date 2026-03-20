@@ -13,6 +13,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import axios from 'axios';
 import API_BASE_URL from '../config/api';
+import CategoryPopup from '../components/CategoryPopup';
 
 const { width } = Dimensions.get('window');
 
@@ -52,6 +53,8 @@ const ACTIONS = [
 const HomeScreen = ({ navigation }) => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [uncategorizedTx, setUncategorizedTx] = useState(null);
   const balance = 12450.75;
 
   useEffect(() => { fetchTransactions(); }, []);
@@ -60,6 +63,12 @@ const HomeScreen = ({ navigation }) => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/transactions`);
       setTransactions(res.data);
+      
+      const uncategorized = res.data.find(tx => tx.category === 'Uncategorized');
+      if (uncategorized) {
+        setUncategorizedTx(uncategorized);
+        setPopupVisible(true);
+      }
     } catch (e) {
       console.error('Fetch error:', e.message);
     } finally {
@@ -212,6 +221,18 @@ const HomeScreen = ({ navigation }) => {
         </View>
 
       </ScrollView>
+
+      <CategoryPopup 
+        visible={popupVisible}
+        transactionId={uncategorizedTx?._id}
+        amount={uncategorizedTx?.amount}
+        merchantName={uncategorizedTx?.merchantName}
+        onClose={() => setPopupVisible(false)}
+        onCategorized={() => {
+          setPopupVisible(false);
+          fetchTransactions();
+        }}
+      />
     </View>
   );
 };
