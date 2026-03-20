@@ -48,7 +48,7 @@ const describeArc = (x, y, radius, startAngle, endAngle) => {
   }
   const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
   return [
-    "M", start.x, start.y, 
+    "M", start.x, start.y,
     "A", radius, radius, 0, largeArcFlag, 0, end.x, end.y
   ].join(" ");
 };
@@ -57,7 +57,7 @@ const describeArc = (x, y, radius, startAngle, endAngle) => {
 const InsightsScreen = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  
+
   // States
   const [activeTab, setActiveTab] = useState('Monthly'); // Weekly, Monthly, Yearly
 
@@ -84,7 +84,7 @@ const InsightsScreen = () => {
   const filteredData = useMemo(() => {
     const debits = data.filter(tx => tx.type === 'DEBIT');
     const now = new Date();
-    
+
     return debits.filter(tx => {
       const d = new Date(tx.date);
       if (activeTab === 'Weekly') {
@@ -106,7 +106,7 @@ const InsightsScreen = () => {
   // 1. Line Chart Data (Trend)
   const lineChartData = useMemo(() => {
     if (!filteredData.length) return { points: [], maxAmount: 0 };
-    
+
     // Group by Day (for Weekly/Monthly) or Month (for Yearly)
     const grouped = {};
     filteredData.forEach(tx => {
@@ -123,7 +123,7 @@ const InsightsScreen = () => {
     // Create an ordered sequence based on activeTab
     let sequence = [];
     const now = new Date();
-    
+
     if (activeTab === 'Weekly') {
       for (let i = 6; i >= 0; i--) {
         const d = new Date();
@@ -154,7 +154,7 @@ const InsightsScreen = () => {
     filteredData.forEach(tx => {
       breakdown[tx.category] = (breakdown[tx.category] || 0) + tx.amount;
     });
-    
+
     let total = 0;
     const slices = Object.entries(breakdown).map(([name, amount]) => {
       total += amount;
@@ -169,7 +169,7 @@ const InsightsScreen = () => {
       const startAngle = currentAngle;
       const endAngle = currentAngle + angle;
       currentAngle += angle;
-      
+
       return { ...slice, percentage: (percentage * 100).toFixed(0), startAngle, endAngle };
     });
 
@@ -181,16 +181,16 @@ const InsightsScreen = () => {
 
   // ─── SVG Calculations ────────────────────────────────────────────────────────
   // Line Chart Math
-  const CHART_WIDTH = width - 80;
+  const CHART_WIDTH = width - 120;
   const CHART_HEIGHT = 160;
-  
+
   const linePath = useMemo(() => {
     if (!lineChartData.sequence) return '';
     const { sequence, maxAmount } = lineChartData;
     if (sequence.length === 0) return '';
-    
+
     const xStep = CHART_WIDTH / Math.max(sequence.length - 1, 1);
-    
+
     const points = sequence.map((p, i) => {
       const x = i * xStep;
       // Invert Y axis
@@ -198,13 +198,13 @@ const InsightsScreen = () => {
       return `${x},${y}`;
     });
 
-    const d = points.map((p, i) => 
+    const d = points.map((p, i) =>
       i === 0 ? `M ${p}` : `L ${p}`
     ).join(' ');
-    
+
     return d;
   }, [lineChartData]);
-  
+
   // Create area path for gradient
   const areaPath = useMemo(() => {
     if (!linePath) return '';
@@ -238,7 +238,7 @@ const InsightsScreen = () => {
       {/* ── Header ──────────────────────────────────────────────────────────── */}
       <View style={s.header}>
         <Text style={s.headerTitle}>Insights</Text>
-        
+
         {/* Toggle */}
         <View style={s.tabContainer}>
           {['Weekly', 'Monthly', 'Yearly'].map(tab => (
@@ -265,7 +265,7 @@ const InsightsScreen = () => {
                   <Text style={s.axisText}>{formatCurrency(lineChartData.maxAmount / 2)}</Text>
                   <Text style={s.axisText}>₹0</Text>
                 </View>
-                
+
                 <View style={s.svgWrapper}>
                   <Svg width={CHART_WIDTH} height={CHART_HEIGHT}>
                     <Defs>
@@ -279,7 +279,7 @@ const InsightsScreen = () => {
                     {/* Line */}
                     <Path d={linePath} fill="none" stroke="#1A1A2E" strokeWidth="3" strokeLinejoin="round" />
                   </Svg>
-                  
+
                   {/* X Axis Labels Minimal */}
                   <View style={s.xAxis}>
                     <Text style={s.axisText}>{lineChartData.sequence[0].label}</Text>
@@ -304,27 +304,27 @@ const InsightsScreen = () => {
                   <Svg width={DONUT_SIZE} height={DONUT_SIZE}>
                     {/* Full grey circle as base in case of gaps (optional) */}
                     <Circle cx={DONUT_CENTER} cy={DONUT_CENTER} r={DONUT_RADIUS} fill="none" stroke="#F5F0EB" strokeWidth="26" />
-                    
+
                     {/* Slices */}
                     {donutData.slices.map((slice, idx) => {
                       // Adjust to leave tiny gaps between slices
                       const gap = donutData.slices.length > 1 ? 1.5 : 0;
                       if (slice.endAngle - slice.startAngle <= gap) return null;
-                      
+
                       const d = describeArc(DONUT_CENTER, DONUT_CENTER, DONUT_RADIUS, slice.startAngle + gap, slice.endAngle - gap);
                       return (
-                        <Path 
-                          key={idx} 
-                          d={d} 
-                          fill="none" 
-                          stroke={slice.color} 
-                          strokeWidth="26" 
-                          strokeLinecap="round" 
+                        <Path
+                          key={idx}
+                          d={d}
+                          fill="none"
+                          stroke={slice.color}
+                          strokeWidth="26"
+                          strokeLinecap="round"
                         />
                       );
                     })}
                   </Svg>
-                  
+
                   {/* Center Text */}
                   <View style={s.donutCenterText}>
                     <Text style={s.donutTotalAmount}>₹{donutData.total.toLocaleString('en-IN')}</Text>
@@ -353,7 +353,7 @@ const InsightsScreen = () => {
             <View style={[s.insightBorder, { backgroundColor: topCategory.color }]} />
             <Text style={s.insightIcon}>✨</Text>
             <Text style={s.insightText}>
-              <Text style={{fontWeight: '700'}}>{topCategory.name}</Text> is your highest spending category this period, making up {topCategory.percentage}% of your total expenses.
+              <Text style={{ fontWeight: '700' }}>{topCategory.name}</Text> is your highest spending category this period, making up {topCategory.percentage}% of your total expenses.
             </Text>
           </View>
         )}
@@ -370,7 +370,7 @@ const s = StyleSheet.create({
     backgroundColor: '#F5F0EB',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
-  
+
   // Header
   header: {
     paddingHorizontal: 22,
@@ -426,6 +426,7 @@ const s = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 24,
     elevation: 3,
+    overflow: 'hidden',
   },
   emptyText: {
     color: '#9C8F84',
