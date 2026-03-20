@@ -1,22 +1,22 @@
 const CategoryMapping = require('../models/CategoryMapping');
 
 const categorizeTransaction = async (merchantName, upiId) => {
-  const nameToMatch = merchantName ? merchantName.toLowerCase() : '';
+  const stringToSearch = `${merchantName || ''} ${upiId || ''}`.toLowerCase();
 
   // Step 1: Keyword matching
-  if (['swiggy', 'zomato', 'foodpanda', 'dominos', 'mcdonalds', 'kfc', 'subway', 'starbucks', 'blinkit', 'zepto', 'bigbasket', 'grofers', 'instamart', 'dunzo'].some(kw => nameToMatch.includes(kw))) {
+  if (['swiggy', 'zomato', 'foodpanda', 'dominos', 'mcdonalds', 'kfc', 'subway', 'starbucks', 'blinkit', 'zepto', 'bigbasket', 'grofers', 'instamart', 'dunzo'].some(kw => stringToSearch.includes(kw))) {
     return 'Food';
   }
-  if (['uber', 'ola', 'rapido', 'redbus', 'irctc', 'makemytrip', 'goibibo', 'yatra', 'ixigo', 'meru', 'zoomcar'].some(kw => nameToMatch.includes(kw))) {
+  if (['uber', 'ola', 'rapido', 'redbus', 'irctc', 'makemytrip', 'goibibo', 'yatra', 'ixigo', 'meru', 'zoomcar'].some(kw => stringToSearch.includes(kw))) {
     return 'Travel';
   }
-  if (['amazon', 'flipkart', 'myntra', 'meesho', 'snapdeal', 'nykaa', 'ajio', 'tatacliq', 'jiomart', 'dmart'].some(kw => nameToMatch.includes(kw))) {
+  if (['amazon', 'flipkart', 'myntra', 'meesho', 'snapdeal', 'nykaa', 'ajio', 'tatacliq', 'jiomart', 'dmart'].some(kw => stringToSearch.includes(kw))) {
     return 'Shopping';
   }
-  if (['electricity', 'recharge', 'airtel', 'jio', 'bsnl', 'bescom', 'tatapower', 'adani', 'vodafone', 'fastag', 'lpg', 'mahanagar gas'].some(kw => nameToMatch.includes(kw))) {
+  if (['electricity', 'recharge', 'airtel', 'jio', 'bsnl', 'bescom', 'tatapower', 'adani', 'vodafone', 'fastag', 'lpg', 'mahanagar gas'].some(kw => stringToSearch.includes(kw))) {
     return 'Bills';
   }
-  if (['netflix', 'spotify', 'hotstar', 'primevideo', 'youtube', 'zee5', 'sonyliv', 'bookmyshow'].some(kw => nameToMatch.includes(kw))) {
+  if (['netflix', 'spotify', 'hotstar', 'primevideo', 'youtube', 'zee5', 'sonyliv', 'bookmyshow'].some(kw => stringToSearch.includes(kw))) {
     return 'Entertainment';
   }
 

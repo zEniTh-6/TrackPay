@@ -5,7 +5,7 @@ const razorpayInstance = require('../utils/razorpay');
 // POST /api/create-order
 router.post('/create-order', async (req, res) => {
   try {
-    const { amount, merchantName } = req.body;
+    const { amount, merchantName, upiId } = req.body;
 
     if (!amount || !merchantName) {
       return res.status(400).json({ error: 'amount and merchantName are required' });
@@ -17,7 +17,8 @@ router.post('/create-order', async (req, res) => {
       currency: 'INR',
       receipt: `receipt_${Date.now()}`,
       notes: {
-        merchantName
+        merchantName,
+        upiId: upiId || ''
       }
     };
 

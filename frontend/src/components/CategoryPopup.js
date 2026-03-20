@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Modal,
   ActivityIndicator,
+  TextInput
 } from 'react-native';
 import axios from 'axios';
 import API_BASE_URL from '../config/api';
@@ -29,23 +30,29 @@ const CategoryPopup = ({
   onCategorized,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [customCategory, setCustomCategory] = useState('');
+  const [showCustomInput, setShowCustomInput] = useState(false);
   const [loading, setLoading] = useState(false);
 
   // Reset state when opened
   useEffect(() => {
     if (visible) {
       setSelectedCategory(null);
+      setCustomCategory('');
+      setShowCustomInput(false);
       setLoading(false);
     }
   }, [visible]);
 
   const handleConfirm = async () => {
     if (!selectedCategory) return;
+    const finalCategory = (showCustomInput && customCategory.trim()) ? customCategory.trim() : selectedCategory;
+
     setLoading(true);
     try {
       await axios.post(`${API_BASE_URL}/api/categorize`, {
         transactionId,
-        category: selectedCategory,
+        category: finalCategory,
       });
       // Trigger parent callback on success to close and refresh list
       onCategorized();
@@ -90,7 +97,10 @@ const CategoryPopup = ({
                   <TouchableOpacity
                     style={[s.catCard, isSelected && s.catCardSelected]}
                     activeOpacity={0.7}
-                    onPress={() => setSelectedCategory(cat.name)}
+                    onPress={() => {
+                      setSelectedCategory(cat.name);
+                      setShowCustomInput(cat.name === 'Others');
+                    }}
                   >
                     <Text style={s.catIcon}>{cat.icon}</Text>
                     <Text style={[s.catName, isSelected && s.catNameSelected]}>
@@ -102,17 +112,33 @@ const CategoryPopup = ({
             })}
           </View>
 
+          {/* ── Custom Category Input ── */}
+          {showCustomInput && (
+            <TextInput
+              style={s.customInput}
+              placeholder="e.g. Gym, Rent, Petrol..."
+              placeholderTextColor="#9C8F84"
+              value={customCategory}
+              onChangeText={setCustomCategory}
+              autoCapitalize="words"
+            />
+          )}
+
           {/* ── Confirm Button ── */}
           <TouchableOpacity
-            style={[s.confirmBtn, !selectedCategory && s.confirmBtnDisabled]}
-            disabled={!selectedCategory || loading}
+            style={[s.confirmBtn, (!selectedCategory || (showCustomInput && !customCategory.trim())) && s.confirmBtnDisabled]}
+            disabled={!selectedCategory || (showCustomInput && !customCategory.trim()) || loading}
             activeOpacity={0.8}
             onPress={handleConfirm}
           >
             {loading ? (
               <ActivityIndicator color="#F5F0EB" />
             ) : (
-              <Text style={s.confirmBtnText}>CONFIRM CATEGORY →</Text>
+              <Text style={s.confirmBtnText}>
+                {showCustomInput && customCategory.trim() 
+                  ? `CONFIRM: ${customCategory.trim().toUpperCase()} →` 
+                  : 'CONFIRM CATEGORY →'}
+              </Text>
             )}
           </TouchableOpacity>
         </View>
@@ -239,6 +265,24 @@ const s = StyleSheet.create({
     fontWeight: '700',
     color: '#F5F0EB',
     letterSpacing: 1.5,
+  },
+
+  // Custom Input
+  customInput: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 15,
+    color: '#1A1A2E',
+    marginBottom: 16,
+    shadowColor: '#1A1A2E',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#EDE8E3',
   },
 });
 

@@ -15,7 +15,6 @@ const categoryMappingSchema = new mongoose.Schema({
   },
   category: { 
     type: String, 
-    enum: ['Food', 'Travel', 'Shopping', 'Bills', 'Personal', 'Others'],
     required: true 
   }
 }, { timestamps: true });

@@ -48,9 +48,10 @@ router.post('/categorize', async (req, res) => {
       return res.status(400).json({ error: 'transactionId and category are required' });
     }
 
-    const validCategories = ['Food', 'Travel', 'Shopping', 'Bills', 'Personal', 'Others'];
-    if (!validCategories.includes(category)) {
-      return res.status(400).json({ error: 'Invalid category' });
+    if (!category || category.trim().length < 2) {
+      return res.status(400).json({ 
+        error: 'Category must be at least 2 characters' 
+      });
     }
 
     // Update transaction

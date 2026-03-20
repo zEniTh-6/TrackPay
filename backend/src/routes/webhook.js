@@ -39,7 +39,9 @@ router.post('/webhook', async (req, res) => {
       const merchantName = (paymentEntity.notes && paymentEntity.notes.merchantName) 
         ? paymentEntity.notes.merchantName 
         : 'Unknown';
-      const upiId = paymentEntity.vpa || null;
+      const upiId = (paymentEntity.notes && paymentEntity.notes.upiId) 
+        ? paymentEntity.notes.upiId 
+        : null;
 
       // Duplicate transaction check
       const existing = await Transaction.findOne({ razorpayPaymentId });

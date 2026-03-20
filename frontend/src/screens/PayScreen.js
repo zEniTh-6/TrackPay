@@ -113,6 +113,7 @@ const PayScreen = ({ navigation }) => {
       const { data: order } = await axios.post(`${API_BASE_URL}/api/create-order`, {
         amount: numericAmount,
         merchantName: receiverName || upiId,
+        upiId: upiId || '',
       });
 
       // Step 2: Open Razorpay checkout
