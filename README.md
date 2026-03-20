@@ -46,8 +46,6 @@ categories to future transactions from the same merchant.
 | Backend | Node.js + Express |
 | Database | MongoDB + Mongoose |
 | Payments | Razorpay |
-| Charts | react-native-svg |
-| Camera | react-native-vision-camera |
 | HTTP Client | Axios |
 
 ---
