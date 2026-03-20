@@ -31,6 +31,7 @@ const CATEGORY_META = {
   Travel:        { color: '#EFF6FF', letter: 'T', accent: '#3B82F6' },
   Shopping:      { color: '#F5F3FF', letter: 'S', accent: '#7C3AED' },
   Bills:         { color: '#FFF1F2', letter: 'B', accent: '#E11D48' },
+  Entertainment: { color: '#FDF4FF', letter: 'E', accent: '#C026D3' },
   Personal:      { color: '#F0FDF4', letter: 'P', accent: '#16A34A' },
   Others:        { color: '#F8FAFC', letter: 'O', accent: '#64748B' },
   Uncategorized: { color: '#F8FAFC', letter: '?', accent: '#94A3B8' },

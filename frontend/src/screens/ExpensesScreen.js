@@ -19,6 +19,7 @@ const CATEGORY_COLORS = {
   Travel: '#8DA7C1',    // Muted Sky
   Shopping: '#C79FBA',  // Dusty Rose
   Bills: '#DDC5A2',     // Sand
+  Entertainment: '#BFA2D6', // Soft Lilac
   Personal: '#9DBF9E',  // Sage Green
   Others: '#B0B0B0',    // Gray
   Uncategorized: '#1A1A2E', // Dark Navy
@@ -198,7 +199,7 @@ const ExpensesScreen = ({ navigation }) => {
           
           {/* Filter Chips */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.chipScroll} contentContainerStyle={s.chipContainer}>
-            {['All', 'Food', 'Travel', 'Shopping', 'Bills', 'Personal'].map(chip => (
+            {['All', 'Food', 'Travel', 'Shopping', 'Bills', 'Entertainment', 'Personal'].map(chip => (
               <TouchableOpacity
                 key={chip}
                 style={[s.chip, activeChip === chip && s.chipActive]}

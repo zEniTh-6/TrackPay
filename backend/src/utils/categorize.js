@@ -4,18 +4,20 @@ const categorizeTransaction = async (merchantName, upiId) => {
   const nameToMatch = merchantName ? merchantName.toLowerCase() : '';
 
   // Step 1: Keyword matching
-  if (nameToMatch.includes('swiggy') || nameToMatch.includes('zomato') || nameToMatch.includes('foodpanda')) {
+  if (['swiggy', 'zomato', 'foodpanda', 'dominos', 'mcdonalds', 'kfc', 'subway', 'starbucks', 'blinkit', 'zepto', 'bigbasket', 'grofers', 'instamart', 'dunzo'].some(kw => nameToMatch.includes(kw))) {
     return 'Food';
   }
-  if (nameToMatch.includes('uber') || nameToMatch.includes('ola') || nameToMatch.includes('rapido')) {
+  if (['uber', 'ola', 'rapido', 'redbus', 'irctc', 'makemytrip', 'goibibo', 'yatra', 'ixigo', 'meru', 'zoomcar'].some(kw => nameToMatch.includes(kw))) {
     return 'Travel';
   }
-  if (nameToMatch.includes('amazon') || nameToMatch.includes('flipkart') || nameToMatch.includes('myntra')) {
+  if (['amazon', 'flipkart', 'myntra', 'meesho', 'snapdeal', 'nykaa', 'ajio', 'tatacliq', 'jiomart', 'dmart'].some(kw => nameToMatch.includes(kw))) {
     return 'Shopping';
   }
-  if (nameToMatch.includes('electricity') || nameToMatch.includes('recharge') || 
-      nameToMatch.includes('airtel') || nameToMatch.includes('jio') || nameToMatch.includes('bsnl')) {
+  if (['electricity', 'recharge', 'airtel', 'jio', 'bsnl', 'bescom', 'tatapower', 'adani', 'vodafone', 'fastag', 'lpg', 'mahanagar gas'].some(kw => nameToMatch.includes(kw))) {
     return 'Bills';
+  }
+  if (['netflix', 'spotify', 'hotstar', 'primevideo', 'youtube', 'zee5', 'sonyliv', 'bookmyshow'].some(kw => nameToMatch.includes(kw))) {
+    return 'Entertainment';
   }
 
   // Step 2: Check CategoryMapping collection by upiId

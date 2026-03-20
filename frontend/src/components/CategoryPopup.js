@@ -15,6 +15,7 @@ const CATEGORIES = [
   { name: 'Travel', icon: '🚕' },
   { name: 'Shopping', icon: '🛍️' },
   { name: 'Bills', icon: '💡' },
+  { name: 'Entertainment', icon: '🍿' },
   { name: 'Personal', icon: '👤' },
   { name: 'Others', icon: '📦' },
 ];

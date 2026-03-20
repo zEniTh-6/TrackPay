@@ -14,6 +14,7 @@ import {
 import axios from 'axios';
 import RazorpayCheckout from 'react-native-razorpay';
 import API_BASE_URL from '../config/api';
+import QRScanner from '../components/QRScanner';
 
 // ─── Keypad config ────────────────────────────────────────────────────────────
 const KEYS = [
@@ -30,6 +31,7 @@ const PayScreen = ({ navigation }) => {
   const [upiId, setUpiId] = useState('');
   const [receiverConfirmed, setReceiverConfirmed] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [scannerVisible, setScannerVisible] = useState(false);
 
   // ── Keypad handler ──────────────────────────────────────────────────────────
   const handleKey = (key) => {
@@ -65,6 +67,32 @@ const PayScreen = ({ navigation }) => {
       return;
     }
     setReceiverConfirmed(true);
+  };
+
+  // ── Handle QR Scan ──────────────────────────────────────────────────────────
+  const handleQRScanned = (qrData) => {
+    setScannerVisible(false); // dismiss camera first
+
+    const params = {};
+    const queryString = qrData.split('?')[1] || '';
+    queryString.split('&').forEach(param => {
+      const [key, value] = param.split('=');
+      if (key && value) {
+        params[decodeURIComponent(key)] = decodeURIComponent(value);
+      }
+    });
+
+    const pa = params['pa'] || '';
+    const pn = params['pn'] || '';
+
+    if (!pa && !pn) {
+      Alert.alert('Invalid QR', 'This QR does not contain a valid UPI link.');
+      return;
+    }
+
+    setUpiId(pa);
+    setReceiverName(pn);
+    setReceiverConfirmed(true); // auto-confirm
   };
 
   // ── Pay via Razorpay ────────────────────────────────────────────────────────
@@ -195,7 +223,7 @@ const PayScreen = ({ navigation }) => {
               </View>
 
               {/* Scan QR */}
-              <TouchableOpacity style={s.scanBtn}>
+              <TouchableOpacity style={s.scanBtn} onPress={() => setScannerVisible(true)}>
                 <Text style={s.scanIcon}>⊞</Text>
                 <Text style={s.scanText}>Scan QR Code</Text>
               </TouchableOpacity>
@@ -249,6 +277,11 @@ const PayScreen = ({ navigation }) => {
           )}
         </TouchableOpacity>
       </View>
+      <QRScanner
+        visible={scannerVisible}
+        onScanned={handleQRScanned}
+        onClose={() => setScannerVisible(false)}
+      />
     </View>
   );
 };
