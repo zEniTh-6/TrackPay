@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   Platform,
   ActivityIndicator,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import API_BASE_URL from '../config/api';
 
@@ -36,9 +37,11 @@ const ExpensesScreen = ({ navigation }) => {
   const [activeMonthIdx, setActiveMonthIdx] = useState(CURRENT_MONTH);
   const [activeChip, setActiveChip] = useState('All');
 
-  useEffect(() => {
-    fetchTransactions();
-  }, [activeMonthIdx]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchTransactions();
+    }, [activeMonthIdx])
+  );
 
   const fetchTransactions = async () => {
     setLoading(true);

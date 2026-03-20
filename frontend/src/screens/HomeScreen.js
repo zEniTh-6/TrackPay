@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import API_BASE_URL from '../config/api';
 import CategoryPopup from '../components/CategoryPopup';
@@ -57,7 +58,11 @@ const HomeScreen = ({ navigation }) => {
   const [uncategorizedTx, setUncategorizedTx] = useState(null);
   const balance = 12450.75;
 
-  useEffect(() => { fetchTransactions(); }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchTransactions();
+    }, [])
+  );
 
   const fetchTransactions = async () => {
     try {

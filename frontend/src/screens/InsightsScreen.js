@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Dimensions,
 } from 'react-native';
 import Svg, { Path, Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
+import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import API_BASE_URL from '../config/api';
 
@@ -60,9 +61,11 @@ const InsightsScreen = () => {
   // States
   const [activeTab, setActiveTab] = useState('Monthly'); // Weekly, Monthly, Yearly
 
-  useEffect(() => {
-    fetchTransactions();
-  }, [activeTab]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchTransactions();
+    }, [activeTab])
+  );
 
   const fetchTransactions = async () => {
     setLoading(true);
