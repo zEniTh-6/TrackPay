@@ -27,28 +27,28 @@ const getGreeting = () => {
 };
 
 const CATEGORY_META = {
-  Food:          { color: '#FFF4EC', letter: 'F', accent: '#E8873A' },
-  Travel:        { color: '#EFF6FF', letter: 'T', accent: '#3B82F6' },
-  Shopping:      { color: '#F5F3FF', letter: 'S', accent: '#7C3AED' },
-  Bills:         { color: '#FFF1F2', letter: 'B', accent: '#E11D48' },
+  Food: { color: '#FFF4EC', letter: 'F', accent: '#E8873A' },
+  Travel: { color: '#EFF6FF', letter: 'T', accent: '#3B82F6' },
+  Shopping: { color: '#F5F3FF', letter: 'S', accent: '#7C3AED' },
+  Bills: { color: '#FFF1F2', letter: 'B', accent: '#E11D48' },
   Entertainment: { color: '#FDF4FF', letter: 'E', accent: '#C026D3' },
-  Personal:      { color: '#F0FDF4', letter: 'P', accent: '#16A34A' },
-  Others:        { color: '#F8FAFC', letter: 'O', accent: '#64748B' },
+  Personal: { color: '#F0FDF4', letter: 'P', accent: '#16A34A' },
+  Others: { color: '#F8FAFC', letter: 'O', accent: '#64748B' },
   Uncategorized: { color: '#F8FAFC', letter: '?', accent: '#94A3B8' },
 };
 
 const CONTACTS = [
   { id: '1', name: 'Sameer', initials: 'SK', bg: '#E8F0FE' },
-  { id: '2', name: 'Priya',  initials: 'PA', bg: '#FCE8E9' },
-  { id: '3', name: 'Rahul',  initials: 'RK', bg: '#FEF6E0' },
+  { id: '2', name: 'Priya', initials: 'PA', bg: '#FCE8E9' },
+  { id: '3', name: 'Rahul', initials: 'RK', bg: '#FEF6E0' },
   { id: '4', name: 'Ananya', initials: 'AN', bg: '#E6F4EA' },
 ];
 
 const ACTIONS = [
-  { id: '1', label: 'Send',    symbol: '↗',  route: 'Pay',      bg: '#EEF2FF' },
-  { id: '2', label: 'Receive', symbol: '↙',  route: 'Pay',      bg: '#F0FDF4' },
-  { id: '3', label: 'Scan QR', symbol: '⊞',  route: 'Pay',      bg: '#F5F3FF' },
-  { id: '4', label: 'History', symbol: '≡',  route: 'Expenses', bg: '#FFF7ED' },
+  { id: '1', label: 'Send', symbol: '↗', route: 'Pay', bg: '#EEF2FF' },
+  { id: '2', label: 'Receive', symbol: '↙', route: 'Pay', bg: '#F0FDF4' },
+  { id: '3', label: 'Scan QR', symbol: '⊞', route: 'Pay', bg: '#F5F3FF' },
+  { id: '4', label: 'History', symbol: '≡', route: 'Expenses', bg: '#FFF7ED' },
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -57,7 +57,15 @@ const HomeScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [popupVisible, setPopupVisible] = useState(false);
   const [uncategorizedTx, setUncategorizedTx] = useState(null);
-  const balance = 12450.75;
+
+  // Dynamic Calcs
+  const totalSpentAllTime = transactions.filter(tx => tx.type === 'DEBIT').reduce((sum, tx) => sum + tx.amount, 0);
+  const balance = 12000 - totalSpentAllTime;
+  const balanceString = balance.toFixed(2).split('.');
+
+  const thisMonthSpent = transactions
+    .filter(tx => tx.type === 'DEBIT' && new Date(tx.date).getMonth() === new Date().getMonth())
+    .reduce((sum, tx) => sum + tx.amount, 0);
 
   useFocusEffect(
     useCallback(() => {
@@ -69,7 +77,7 @@ const HomeScreen = ({ navigation }) => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/transactions`);
       setTransactions(res.data);
-      
+
       const uncategorized = res.data.find(tx => tx.category === 'Uncategorized');
       if (uncategorized) {
         setUncategorizedTx(uncategorized);
@@ -86,6 +94,22 @@ const HomeScreen = ({ navigation }) => {
     .filter(tx => tx.type === 'DEBIT' && new Date(tx.date).toDateString() === new Date().toDateString())
     .reduce((sum, tx) => sum + tx.amount, 0);
 
+  // Reactive Sparkline (Last 28 days)
+  const sparklineData = Array(28).fill(0);
+  const now = new Date();
+  for (let i = 0; i < 28; i++) {
+    const targetDate = new Date();
+    targetDate.setDate(now.getDate() - (27 - i));
+
+    const daySpent = transactions
+      .filter(tx => tx.type === 'DEBIT' && new Date(tx.date).toDateString() === targetDate.toDateString())
+      .reduce((sum, tx) => sum + tx.amount, 0);
+
+    sparklineData[i] = daySpent;
+  }
+  const maxSparkVal = Math.max(...sparklineData, 1);
+  const sparkHeights = sparklineData.map(val => Math.max(8, (val / maxSparkVal) * 58));
+
   return (
     <View style={s.root}>
       <StatusBar barStyle="dark-content" backgroundColor="#F5F0EB" />
@@ -95,15 +119,15 @@ const HomeScreen = ({ navigation }) => {
         <View style={s.header}>
           <View>
             <Text style={s.greetLabel}>{getGreeting()}</Text>
-            <Text style={s.greetName}>Aryan</Text>
+            <Text style={s.greetName}>Ishaan</Text>
           </View>
           <View style={s.headerRight}>
             <TouchableOpacity style={s.iconPill}>
               <Text style={s.iconPillText}>🔔</Text>
             </TouchableOpacity>
-            <View style={s.avatar}>
-              <Text style={s.avatarText}>AR</Text>
-            </View>
+            <TouchableOpacity style={s.avatar} onPress={() => navigation.navigate('Profile')}>
+              <Text style={s.avatarText}>IS</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -116,8 +140,8 @@ const HomeScreen = ({ navigation }) => {
 
           <View style={s.balanceRow}>
             <Text style={s.balanceSymbol}>₹</Text>
-            <Text style={s.balanceMain}>12,450</Text>
-            <Text style={s.balanceCents}>.75</Text>
+            <Text style={s.balanceMain}>{parseInt(balanceString[0], 10).toLocaleString('en-IN')}</Text>
+            <Text style={s.balanceCents}>.{balanceString[1]}</Text>
           </View>
 
           <View style={s.balanceDivider} />
@@ -128,13 +152,13 @@ const HomeScreen = ({ navigation }) => {
               <Text style={s.cardFooterValue}>₹{todaySpent.toLocaleString('en-IN')}</Text>
             </View>
             <View style={s.growthPill}>
-              <Text style={s.growthText}>↑ 2.4% this month</Text>
+              <Text style={s.growthText}>₹{thisMonthSpent.toLocaleString('en-IN')} this month</Text>
             </View>
           </View>
 
           {/* Sparkline */}
           <View style={s.sparkRow}>
-            {[18, 30, 22, 44, 36, 54, 42].map((h, i) => (
+            {sparkHeights.map((h, i) => (
               <View key={i} style={[s.sparkBar, { height: h, opacity: 0.18 + i * 0.12 }]} />
             ))}
           </View>
@@ -228,7 +252,7 @@ const HomeScreen = ({ navigation }) => {
 
       </ScrollView>
 
-      <CategoryPopup 
+      <CategoryPopup
         visible={popupVisible}
         transactionId={uncategorizedTx?._id}
         amount={uncategorizedTx?.amount}
@@ -291,8 +315,8 @@ const s = StyleSheet.create({
   },
   balanceRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 4 },
   balanceSymbol: { fontSize: 22, fontWeight: '300', color: '#1A1A2E', marginTop: 6, marginRight: 2 },
-  balanceMain: { fontSize: 44, fontWeight: '700', color: '#1A1A2E', letterSpacing: -1.5 },
-  balanceCents: { fontSize: 22, fontWeight: '300', color: '#9C8F84', marginTop: 18 },
+  balanceMain: { fontSize: 44, fontWeight: '700', color: '#1A1A2E', letterSpacing: 0.5 },
+  balanceCents: { fontSize: 28, fontWeight: '300', color: '#9C8F84', marginTop: 18 },
   balanceDivider: { height: 1, backgroundColor: '#F0ECE8', marginVertical: 16 },
   cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 },
   cardFooterLabel: { fontSize: 10, letterSpacing: 1.8, color: '#9C8F84', textTransform: 'uppercase', marginBottom: 4 },
@@ -302,8 +326,8 @@ const s = StyleSheet.create({
     paddingHorizontal: 12, paddingVertical: 6,
   },
   growthText: { fontSize: 12, fontWeight: '600', color: '#16A34A' },
-  sparkRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 5 },
-  sparkBar: { width: 7, backgroundColor: '#1A1A2E', borderRadius: 4 },
+  sparkRow: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', paddingTop: 8 },
+  sparkBar: { width: 10, backgroundColor: '#1A1A2E', borderRadius: 2 },
 
   // Actions
   actionsCard: {

@@ -128,7 +128,7 @@ const PayScreen = ({ navigation }) => {
         prefill: {
           email: 'user@trackpay.app',
           contact: '9999999999',
-          name: 'Aryan',
+          name: 'Ishaan',
         },
         theme: { color: '#4DA6FF' },
       };
@@ -390,7 +390,7 @@ const s = StyleSheet.create({
   },
   amountText: {
     fontSize: 60, fontWeight: '700', color: '#1A1A2E',
-    letterSpacing: -2,
+    letterSpacing: 1,
   },
   amountLabel: {
     fontSize: 10, letterSpacing: 2.5, color: '#9C8F84',

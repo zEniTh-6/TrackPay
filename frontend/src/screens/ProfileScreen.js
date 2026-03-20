@@ -43,7 +43,7 @@ const ProfileScreen = ({ navigation }) => {
   // ─── Stats Calculations ───────────────────────────────────────────────────
   // Debits only for spending stats
   const debits = data.filter(tx => tx.type === 'DEBIT');
-  
+
   const totalTxns = data.length;
   const totalSpent = debits.reduce((sum, tx) => sum + tx.amount, 0);
 
@@ -55,9 +55,7 @@ const ProfileScreen = ({ navigation }) => {
 
   // Formatting helper
   const formatCurrency = (val) => {
-    if (val >= 100000) return `₹${(val / 100000).toFixed(1)}L`;
-    if (val >= 1000) return `₹${(val / 1000).toFixed(1)}k`;
-    return `₹${Math.round(val)}`;
+    return `₹${Math.round(val).toLocaleString('en-IN')}`;
   };
 
   // ─── Render ─────────────────────────────────────────────────────────────────
@@ -76,15 +74,15 @@ const ProfileScreen = ({ navigation }) => {
         <View style={s.profileContainer}>
           <View style={s.avatarWrapper}>
             <View style={s.avatar}>
-              <Text style={s.avatarText}>AR</Text>
+              <Text style={s.avatarText}>IS</Text>
             </View>
             <TouchableOpacity style={s.editBadge} activeOpacity={0.8}>
               <Text style={s.editBadgeIcon}>✎</Text>
             </TouchableOpacity>
           </View>
-          
-          <Text style={s.profileName}>Aryan</Text>
-          <Text style={s.profileEmail}>aryan@trackpay.app</Text>
+
+          <Text style={s.profileName}>Ishaan</Text>
+          <Text style={s.profileEmail}>ishaan@trackpay.app</Text>
         </View>
 
         {/* ── Stats Row ───────────────────────────────────────────────────── */}
@@ -98,11 +96,11 @@ const ProfileScreen = ({ navigation }) => {
             )}
           </View>
           <View style={s.statSpacer} />
-          
+
           <View style={s.statCard}>
             <Text style={s.statEyebrow}>TOTAL SPENT</Text>
             {loading ? (
-               <ActivityIndicator color="#1A1A2E" size="small" />
+              <ActivityIndicator color="#1A1A2E" size="small" />
             ) : (
               <Text style={s.statValue}>{formatCurrency(totalSpent)}</Text>
             )}
@@ -112,7 +110,7 @@ const ProfileScreen = ({ navigation }) => {
           <View style={s.statCard}>
             <Text style={s.statEyebrow}>THIS MONTH</Text>
             {loading ? (
-               <ActivityIndicator color="#1A1A2E" size="small" />
+              <ActivityIndicator color="#1A1A2E" size="small" />
             ) : (
               <Text style={s.statValue}>{formatCurrency(thisMonthSpent)}</Text>
             )}
@@ -122,47 +120,47 @@ const ProfileScreen = ({ navigation }) => {
         {/* ── Settings Section ────────────────────────────────────────────── */}
         <View style={s.section}>
           <Text style={s.sectionTitle}>PREFERENCES</Text>
-          
+
           <View style={s.settingsCard}>
             {/* Notifications */}
             <View style={s.settingRow}>
-               <View style={s.settingIconWrapper}>
-                 <Text style={s.settingIcon}>🔔</Text>
-               </View>
-               <Text style={s.settingLabel}>Notifications</Text>
-               <Switch
-                 trackColor={{ false: '#E0DFDC', true: '#1A1A2E' }}
-                 thumbColor={'#FFFFFF'}
-                 onValueChange={setNotificationsEnabled}
-                 value={notificationsEnabled}
-               />
+              <View style={s.settingIconWrapper}>
+                <Text style={s.settingIcon}>🔔</Text>
+              </View>
+              <Text style={s.settingLabel}>Notifications</Text>
+              <Switch
+                trackColor={{ false: '#E0DFDC', true: '#1A1A2E' }}
+                thumbColor={'#FFFFFF'}
+                onValueChange={setNotificationsEnabled}
+                value={notificationsEnabled}
+              />
             </View>
 
             <View style={s.settingDivider} />
 
             {/* Dark Mode */}
             <View style={s.settingRow}>
-               <View style={s.settingIconWrapper}>
-                 <Text style={s.settingIcon}>🌙</Text>
-               </View>
-               <Text style={s.settingLabel}>Dark Mode</Text>
-               <Switch
-                 trackColor={{ false: '#E0DFDC', true: '#1A1A2E' }}
-                 thumbColor={'#FFFFFF'}
-                 onValueChange={setDarkModeEnabled}
-                 value={darkModeEnabled}
-               />
+              <View style={s.settingIconWrapper}>
+                <Text style={s.settingIcon}>🌙</Text>
+              </View>
+              <Text style={s.settingLabel}>Dark Mode</Text>
+              <Switch
+                trackColor={{ false: '#E0DFDC', true: '#1A1A2E' }}
+                thumbColor={'#FFFFFF'}
+                onValueChange={setDarkModeEnabled}
+                value={darkModeEnabled}
+              />
             </View>
 
             <View style={s.settingDivider} />
 
             {/* Currency */}
             <View style={s.settingRow}>
-               <View style={s.settingIconWrapper}>
-                 <Text style={s.settingIcon}>💰</Text>
-               </View>
-               <Text style={s.settingLabel}>Currency</Text>
-               <Text style={s.settingValueText}>INR (₹)</Text>
+              <View style={s.settingIconWrapper}>
+                <Text style={s.settingIcon}>💰</Text>
+              </View>
+              <Text style={s.settingLabel}>Currency</Text>
+              <Text style={s.settingValueText}>INR (₹)</Text>
             </View>
           </View>
         </View>
@@ -170,37 +168,37 @@ const ProfileScreen = ({ navigation }) => {
         {/* ── Support Section ─────────────────────────────────────────────── */}
         <View style={s.section}>
           <Text style={s.sectionTitle}>SUPPORT</Text>
-          
+
           <View style={s.settingsCard}>
             {/* Help */}
             <TouchableOpacity style={s.settingRow} activeOpacity={0.6}>
-               <View style={s.settingIconWrapper}>
-                 <Text style={s.settingIcon}>❓</Text>
-               </View>
-               <Text style={s.settingLabel}>Help & FAQ</Text>
-               <Text style={s.settingChevron}>›</Text>
+              <View style={s.settingIconWrapper}>
+                <Text style={s.settingIcon}>❓</Text>
+              </View>
+              <Text style={s.settingLabel}>Help & FAQ</Text>
+              <Text style={s.settingChevron}>›</Text>
             </TouchableOpacity>
 
             <View style={s.settingDivider} />
 
             {/* Rate */}
             <TouchableOpacity style={s.settingRow} activeOpacity={0.6}>
-               <View style={s.settingIconWrapper}>
-                 <Text style={s.settingIcon}>⭐</Text>
-               </View>
-               <Text style={s.settingLabel}>Rate the App</Text>
-               <Text style={s.settingChevron}>›</Text>
+              <View style={s.settingIconWrapper}>
+                <Text style={s.settingIcon}>⭐</Text>
+              </View>
+              <Text style={s.settingLabel}>Rate the App</Text>
+              <Text style={s.settingChevron}>›</Text>
             </TouchableOpacity>
 
             <View style={s.settingDivider} />
 
             {/* Contact */}
             <TouchableOpacity style={s.settingRow} activeOpacity={0.6}>
-               <View style={s.settingIconWrapper}>
-                 <Text style={s.settingIcon}>📧</Text>
-               </View>
-               <Text style={s.settingLabel}>Contact Us</Text>
-               <Text style={s.settingChevron}>›</Text>
+              <View style={s.settingIconWrapper}>
+                <Text style={s.settingIcon}>📧</Text>
+              </View>
+              <Text style={s.settingLabel}>Contact Us</Text>
+              <Text style={s.settingChevron}>›</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -222,7 +220,7 @@ const s = StyleSheet.create({
     backgroundColor: '#F5F0EB',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
-  
+
   // Header
   header: {
     paddingHorizontal: 22,
@@ -335,7 +333,7 @@ const s = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: '#1A1A2E',
-    letterSpacing: -0.5,
+    letterSpacing: 0.5,
   },
 
   // Sections
@@ -360,7 +358,7 @@ const s = StyleSheet.create({
     shadowRadius: 20,
     elevation: 2,
   },
-  
+
   // Setting Row
   settingRow: {
     flexDirection: 'row',
@@ -399,7 +397,7 @@ const s = StyleSheet.create({
   settingDivider: {
     height: 1,
     backgroundColor: '#F0ECE8',
-    marginLeft: 72, 
+    marginLeft: 72,
   },
 
   // App Info

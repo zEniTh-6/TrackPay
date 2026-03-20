@@ -19,13 +19,14 @@ const { width } = Dimensions.get('window');
 
 // ─── Theme Data ───────────────────────────────────────────────────────────────
 const CATEGORY_COLORS = {
-  Food: '#E5A885',      // Warm Earth
-  Travel: '#8DA7C1',    // Muted Sky
-  Shopping: '#C79FBA',  // Dusty Rose
-  Bills: '#DDC5A2',     // Sand
-  Personal: '#9DBF9E',  // Sage Green
-  Others: '#B0B0B0',    // Gray
-  Uncategorized: '#1A1A2E', // Dark Navy
+  Food: '#E8873A',
+  Travel: '#3B82F6',
+  Shopping: '#7C3AED',
+  Bills: '#E11D48',
+  Entertainment: '#C026D3',
+  Personal: '#16A34A',
+  Others: '#64748B',
+  Uncategorized: '#94A3B8',
 };
 
 // ─── SVG Arc Helpers ─────────────────────────────────────────────────────────
@@ -218,8 +219,7 @@ const InsightsScreen = () => {
 
   // ─── Render Helpers ────────────────────────────────────────────────────────
   const formatCurrency = (val) => {
-    if (val >= 1000) return `₹${(val / 1000).toFixed(1)}k`;
-    return `₹${Math.round(val)}`;
+    return `₹${Math.round(val).toLocaleString('en-IN')}`;
   };
 
   if (loading) {
@@ -473,7 +473,7 @@ const s = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     color: '#1A1A2E',
-    letterSpacing: -0.5,
+    letterSpacing: 0.5,
   },
   donutTotalLabel: {
     fontSize: 12,

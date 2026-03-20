@@ -15,14 +15,14 @@ import API_BASE_URL from '../config/api';
 
 // ─── Theme Data ───────────────────────────────────────────────────────────────
 const CATEGORY_COLORS = {
-  Food: '#E5A885',      // Warm Earth
-  Travel: '#8DA7C1',    // Muted Sky
-  Shopping: '#C79FBA',  // Dusty Rose
-  Bills: '#DDC5A2',     // Sand
-  Entertainment: '#BFA2D6', // Soft Lilac
-  Personal: '#9DBF9E',  // Sage Green
-  Others: '#B0B0B0',    // Gray
-  Uncategorized: '#1A1A2E', // Dark Navy
+  Food: '#E8873A',
+  Travel: '#3B82F6',
+  Shopping: '#7C3AED',
+  Bills: '#E11D48',
+  Entertainment: '#C026D3',
+  Personal: '#16A34A',
+  Others: '#64748B',
+  Uncategorized: '#94A3B8',
 };
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -33,7 +33,7 @@ const CURRENT_MONTH = new Date().getMonth();
 const ExpensesScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
-  
+
   // States
   const [activeMonthIdx, setActiveMonthIdx] = useState(CURRENT_MONTH);
   const [activeChip, setActiveChip] = useState('All');
@@ -69,9 +69,9 @@ const ExpensesScreen = ({ navigation }) => {
   // Calculate Summaries
   const summaries = useMemo(() => {
     if (!monthlyExpenses.length) return { total: 0, peak: 0, dailyAvg: 0 };
-    
+
     const total = monthlyExpenses.reduce((sum, t) => sum + t.amount, 0);
-    
+
     // Group by day to find peak
     const dailyTotals = {};
     monthlyExpenses.forEach(t => {
@@ -79,7 +79,7 @@ const ExpensesScreen = ({ navigation }) => {
       dailyTotals[day] = (dailyTotals[day] || 0) + t.amount;
     });
     const peak = Math.max(...Object.values(dailyTotals), 0);
-    
+
     // Daily Avg (assuming divided by current day of month)
     const daysPassed = (activeMonthIdx === CURRENT_MONTH) ? new Date().getDate() : 30;
     const dailyAvg = total / (daysPassed || 1);
@@ -93,7 +93,7 @@ const ExpensesScreen = ({ navigation }) => {
     monthlyExpenses.forEach(t => {
       breakdown[t.category] = (breakdown[t.category] || 0) + t.amount;
     });
-    
+
     return Object.entries(breakdown)
       .map(([name, amount]) => ({
         name,
@@ -116,10 +116,9 @@ const ExpensesScreen = ({ navigation }) => {
 
   // ─── Render Helpers ────────────────────────────────────────────────────────
   const formatCurrency = (val) => {
-    if (val >= 1000) return `₹${(val / 1000).toFixed(1)}k`;
-    return `₹${Math.round(val)}`;
+    return `₹${Math.round(val).toLocaleString('en-IN')}`;
   };
-  
+
   const formatDate = (dateStr) => {
     const options = { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
     return new Date(dateStr).toLocaleString('en-US', options);
@@ -134,15 +133,15 @@ const ExpensesScreen = ({ navigation }) => {
       <View style={s.header}>
         <Text style={s.headerTitle}>My Expenses</Text>
         <View style={s.monthSelector}>
-          <TouchableOpacity 
-             onPress={() => setActiveMonthIdx(prev => Math.max(0, prev - 1))}
-             hitSlop={{top:10, bottom:10, left:10, right:10}}>
+          <TouchableOpacity
+            onPress={() => setActiveMonthIdx(prev => Math.max(0, prev - 1))}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
             <Text style={s.monthArrow}>‹</Text>
           </TouchableOpacity>
           <Text style={s.monthText}>{MONTHS[activeMonthIdx]} {CURRENT_YEAR}</Text>
-          <TouchableOpacity 
-             onPress={() => setActiveMonthIdx(prev => Math.min(11, prev + 1))}
-             hitSlop={{top:10, bottom:10, left:10, right:10}}>
+          <TouchableOpacity
+            onPress={() => setActiveMonthIdx(prev => Math.min(11, prev + 1))}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
             <Text style={s.monthArrow}>›</Text>
           </TouchableOpacity>
         </View>
@@ -171,12 +170,12 @@ const ExpensesScreen = ({ navigation }) => {
         {/* ── Category Breakdown ──────────────────────────────────────────── */}
         <View style={s.section}>
           <Text style={s.sectionTitle}>SPENDING BY CATEGORY</Text>
-          
+
           <View style={s.card}>
             {categories.length === 0 && (
               <Text style={s.emptyText}>No spending recorded this month.</Text>
             )}
-            
+
             {categories.map((cat, idx) => (
               <TouchableOpacity key={idx} style={s.catRow} activeOpacity={0.6}>
                 <View style={s.catHeader}>
@@ -196,10 +195,10 @@ const ExpensesScreen = ({ navigation }) => {
         {/* ── Transaction List ────────────────────────────────────────────── */}
         <View style={s.section}>
           <Text style={s.sectionTitle}>TRANSACTIONS</Text>
-          
+
           {/* Filter Chips */}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.chipScroll} contentContainerStyle={s.chipContainer}>
-            {['All', 'Food', 'Travel', 'Shopping', 'Bills', 'Entertainment', 'Personal'].map(chip => (
+            {['All', ...Array.from(new Set(monthlyExpenses.map(t => t.category)))].map(chip => (
               <TouchableOpacity
                 key={chip}
                 style={[s.chip, activeChip === chip && s.chipActive]}
@@ -242,8 +241,8 @@ const ExpensesScreen = ({ navigation }) => {
       </ScrollView>
 
       {/* ── Floating Add Button ───────────────────────────────────────────── */}
-      <TouchableOpacity 
-        style={s.fab} 
+      <TouchableOpacity
+        style={s.fab}
         activeOpacity={0.8}
         onPress={() => navigation.navigate('Pay')}
       >
@@ -260,7 +259,7 @@ const s = StyleSheet.create({
     backgroundColor: '#F5F0EB',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
-  
+
   // Header
   header: {
     flexDirection: 'row',
@@ -325,7 +324,7 @@ const s = StyleSheet.create({
     fontSize: 22,
     fontWeight: '700',
     color: '#1A1A2E',
-    letterSpacing: -0.5,
+    letterSpacing: 0.5,
   },
 
   // Sections
